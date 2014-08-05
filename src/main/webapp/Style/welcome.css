@@ -1,0 +1,15 @@
+body{
+		font-family:"微软雅黑";
+}
+#user-info {
+	display: block;
+}
+
+#left {
+	height: 100%;
+	float: left;
+}
+
+#right {
+	height: 100%;
+}

@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	<!-- 定义全局资源文件 value为资源文件的baseName -->
+	<constant name="struts.custom.i18n.resources" value="scalPIMS"></constant>
+
+	<!-- 定义上传最大值 -->
+	<constant name="struts.multipart.maxSize" value="55000000" />
+
+	<package name="action" extends="struts-default">
+
+		<interceptors>
+			<!-- 配置系统管理员角色的权限检查拦截器 -->
+			<interceptor class="com.scal.PIMS.authority.AdminAuthority"
+				name="adminAuthority" />
+			<!-- 配置项目管理员角色的权限检查拦截器 -->
+			<interceptor class="com.scal.PIMS.authority.ProjectManagerAuthority"
+				name="projectManagerAuthority" />
+			<!-- 配置普通用户角色的权限检查拦截器 -->
+			<interceptor class="com.scal.PIMS.authority.UserAuthority"
+				name="userAuthority" />
+
+			<!-- 配置普通用户的默认的拦截器栈 -->
+			<interceptor-stack name="userStack">
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="userAuthority" />
+			</interceptor-stack>
+			<!-- 配置项目管理员的默认的拦截器栈 -->
+			<interceptor-stack name="projectManagerStack">
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="projectManagerAuthority" />
+			</interceptor-stack>
+			<!-- 配置系统管理员的默认的拦截器栈 -->
+			<interceptor-stack name="adminStack">
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="adminAuthority" />
+			</interceptor-stack>
+		</interceptors>
+
+		<global-results>
+			<result name="error">/accessDenied.jsp</result>
+		</global-results>
+		<action name="Login">
+			<result>/login.jsp</result>
+		</action>
+		<action name="Welcome" class="com.scal.PIMS.action.LoginAction">
+			<!-- <result name="success">/welcome.jsp</result> -->
+			<result name="success">/index.jsp</result>
+			<result name="input">/testLogin.jsp</result>
+		</action>
+
+
+		<!-- 周波的配置开始 -->
+		<!-- 合同模块 -->
+		<action name="findContract" class="com.scal.PIMS.action.ContractAction"
+			method="findContract">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectContract/projectContract.jsp
+			</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeAddContract" class="com.scal.PIMS.action.ContractAction"
+			method="beforeAddContract">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectContract/contractAdd.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="addContract" class="com.scal.PIMS.action.ContractAction"
+			method="addContract">
+			<interceptor-ref name="prepare"/>
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success" type="redirectAction">findContract?projectId=${projectId}&amp;projectName=${projectName}&amp;page=1&amp;flag=1
+			</result>
+			<result name="input">/Pages/ProjectContract/contractAdd.jsp</result>
+		</action>
+		<action name="updateContract" class="com.scal.PIMS.action.ContractAction"
+			method="updateContract">
+			<interceptor-ref name="prepare"/>
+			<interceptor-ref name="projectManagerStack" />
+			<result type="redirectAction" name="success">findContract?projectId=${projectId}&amp;projectName=${projectName}&amp;page=1&amp;flag=1
+			</result>
+			<result name="input">/Pages/ProjectContract/contractEdit.jsp</result>
+		</action>
+		<action name="beforeUpdateContract" class="com.scal.PIMS.action.ContractAction"
+			method="beforeUpdate">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectContract/contractEdit.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="contractDetail" class="com.scal.PIMS.action.ContractAction"
+			method="contractDetail">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectContract/contractDetail.jsp
+			</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<!-- <action name="deleteContract" class="com.scal.PIMS.action.ContractAction" 
+			method="deleteContract"> <interceptor-ref name="projectManagerStack" /> <result 
+			type="redirectAction" name="success">findContract?projectId=${projectId}&amp;page=1&amp;flag=1 
+			</result> <result name="input">/error.jsp</result> </action> -->
+		<action name="deleteAnyContract" class="com.scal.PIMS.action.ContractAction"
+			method="deleteAnyContract">
+			<interceptor-ref name="projectManagerStack" />
+			<result type="redirectAction" name="success">findContract?projectId=${projectId}&amp;projectName=${projectName}&amp;page=1&amp;flag=1
+			</result>
+			<result name="input">/error.jsp</result>
+		</action>
+
+		<!-- 用户模块 -->
+		<action name="findUser" class="com.scal.PIMS.action.UserAction"
+			method="findUser">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/user.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="findUserByCondition" class="com.scal.PIMS.action.UserAction"
+			method="findUserByCondition">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/user.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="addUser" class="com.scal.PIMS.action.UserAction"
+			method="addUser">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/userAdd.jsp</result>
+			<result name="input">/Pages/UserAuthority/userAdd.jsp</result>
+		</action>
+		<action name="beforeAddUser" class="com.scal.PIMS.action.UserAction"
+			method="beforeAddUser">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/userAdd.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeUpdateUser" class="com.scal.PIMS.action.UserAction"
+			method="beforeUpdateUser">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/userEdit.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeUpdateUserRole" class="com.scal.PIMS.action.UserAction"
+			method="beforeUpdateUserRole">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/userRole.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="updateUser" class="com.scal.PIMS.action.UserAction"
+			method="updateUser">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findUser?page=1</result>
+			<result name="input">/Pages/UserAuthority/userEdit.jsp</result>
+		</action>
+		<!-- <action name="deleteUser" class="com.scal.PIMS.action.UserAction" 
+			method="deleteUser"> <interceptor-ref name="adminStack" /> <result type="redirectAction" 
+			name="success">findUser</result> <result name="input">/error.jsp</result> 
+			</action> -->
+		<action name="deleteAnyUser" class="com.scal.PIMS.action.UserAction"
+			method="deleteAnyUser">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findUser?page=1</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="resetPassword" class="com.scal.PIMS.action.UserAction"
+			method="resetPassword">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findUser</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="userDetail" class="com.scal.PIMS.action.UserAction"
+			method="userDetail">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/userDetail.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+
+		<!-- 角色模块 -->
+		<action name="findRole" class="com.scal.PIMS.action.RoleAction"
+			method="findRole">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/role.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="addRole" class="com.scal.PIMS.action.RoleAction"
+			method="addRole">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findRole</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeUpdateRole" class="com.scal.PIMS.action.RoleAction"
+			method="beforeUpdateRole">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/roleEdit.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="updateRole" class="com.scal.PIMS.action.RoleAction"
+			method="updateRole">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findRole</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<!-- <action name="deleteRole" class="com.scal.PIMS.action.RoleAction" 
+			method="deleteRole"> <interceptor-ref name="adminStack" /> <result type="redirectAction" 
+			name="success">findRole</result> <result name="input">/error.jsp</result> 
+			</action> -->
+		<action name="deleteAnyRole" class="com.scal.PIMS.action.RoleAction"
+			method="deleteAnyRole">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findRole</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeUpdateRoleAuthority" class="com.scal.PIMS.action.RoleAction"
+			method="beforeUpdateRoleAuthority">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/roleAuthority.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+
+		<!-- 系统功能模块 -->
+		<action name="findAuthority" class="com.scal.PIMS.action.AuthorityAction"
+			method="findAuthority">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/authority.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="addAuthority" class="com.scal.PIMS.action.AuthorityAction"
+			method="addAuthority">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findAuthority</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeUpdateAuthority" class="com.scal.PIMS.action.AuthorityAction"
+			method="beforeUpdateAuthority">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/UserAuthority/authorityEdit.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="updateAuthority" class="com.scal.PIMS.action.AuthorityAction"
+			method="updateAuthority">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findAuthority</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<!-- <action name="deleteAuthority" class="com.scal.PIMS.action.AuthorityAction" 
+			method="deleteAuthority"> <interceptor-ref name="adminStack" /> <result type="redirectAction" 
+			name="success">findAuthority</result> <result name="input">/error.jsp</result> 
+			</action> -->
+		<action name="deleteAnyAuthority" class="com.scal.PIMS.action.AuthorityAction"
+			method="deleteAnyAuthority">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findAuthority</result>
+			<result name="input">/error.jsp</result>
+		</action>
+
+		<!-- 为用户分配角色，以及对角色授权相应功能 -->
+		<action name="addUserRole" class="com.scal.PIMS.action.UserRoleAction"
+			method="addUserRole">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findUser?page=1</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="addRoleAuthority" class="com.scal.PIMS.action.RoleAuthorityAction"
+			method="addRoleAuthority">
+			<interceptor-ref name="adminStack" />
+			<result type="redirectAction" name="success">findRole</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<!-- 周波的配置结束 -->
+
+
+		<!-- 曾雨桐的配置开始 -->
+		<!-- 项目信息模块开始 -->
+		<action name="findAllProjectInfo" class="com.scal.PIMS.action.ProjectInfoAction"
+			method="findAllProjectInfo">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectInfo/projectInfo.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="addProjectInfo" class="com.scal.PIMS.action.ProjectInfoAction"
+			method="addProjectInfo">
+			<result name="success" type="redirectAction">findAllProjectInfo?page=1</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="editProjectInfo" class="com.scal.PIMS.action.ProjectInfoAction"
+			method="editProjectInfo">
+			<result name="success" type="redirectAction">findAllProjectInfo?page=1</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeEditProjectInfo" class="com.scal.PIMS.action.ProjectInfoAction"
+			method="beforeEdit">
+			<result name="success">/Pages/ProjectInfo/infoEdit.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="deleteProjectInfo" class="com.scal.PIMS.action.ProjectInfoAction"
+			method="deleteProjectInfo">
+			<result name="success" type="redirectAction">findAllProjectInfo?page=1</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="searchProInfo" class="com.scal.PIMS.action.ProjectInfoAction"
+			method="searchProInfo">
+			<result name="success">/Pages/ProjectInfo/projectInfo.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<!-- 项目信息模块结束 -->
+
+		<!-- 项目进度模块开始 -->
+		<action name="findAllProgressInfo" class="com.scal.PIMS.action.ProgressAction"
+			method="findAllProgressInfo">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectProgress/projectProgress.jsp
+			</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeAdd" class="com.scal.PIMS.action.ProgressAction"
+			method="beforeAdd">
+			<result name="success">/Pages/ProjectProgress/progressAdd.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="addProgressInfo" class="com.scal.PIMS.action.ProgressAction"
+			method="addProgressInfo">
+			<result name="success" type="redirectAction">findAllProgressInfo?projectId=${projectId}&amp;page=1&amp;flag=1
+			</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeEditProgressInfo" class="com.scal.PIMS.action.ProgressAction"
+			method="beforeEditProgressInfo">
+			<result name="success">/Pages/ProjectProgress/progressEdit.jsp?projectName=${projectName}
+			</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="editProgressInfo" class="com.scal.PIMS.action.ProgressAction"
+			method="editProgressInfo">
+			<result name="success" type="redirectAction">findAllProgressInfo?projectId=${projectId}&amp;projectName=${projectName}&amp;page=1&amp;flag=1
+			</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="deleteProgressInfo" class="com.scal.PIMS.action.ProgressAction"
+			method="deleteProgressInfo">
+			<result name="success" type="redirectAction">findAllProgressInfo?projectId=${projectId}
+			</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<!-- 项目进度模块结束 -->
+
+		<!-- 项目预算模块开始 -->
+		<action name="multiEntityQuery" class="com.scal.PIMS.action.ProjectBudgetAction"
+			method="multiEntityQuery">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectBudget/projectBudget.jsp</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="searchBudgetInfo" class="com.scal.PIMS.action.ProjectBudgetAction"
+			method="searchBudgetInfo">
+			<result name="success">/Pages/ProjectBudget/projectBudget.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<action name="beforeAddProjectBudget" class="com.scal.PIMS.action.ProjectBudgetAction"
+			method="beforeAddProjectBudget">
+			<result name="success">/Pages/ProjectBudget/budgetAdd.jsp</result>
+			<result name="error">/error.jsp</result>
+		</action>
+
+		<action name="addProjectBudget" class="com.scal.PIMS.action.ProjectBudgetAction"
+			method="addProjectBudget">
+			<result name="success" type="redirectAction">multiEntityQuery</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="listProjectBudget" class="com.scal.PIMS.action.ProjectBudgetAction"
+			method="listProjectBudget">
+			<result name="success">/Pages/ProjectBudget/projectBudget.jsp</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="beforeEditProjectBudget" class="com.scal.PIMS.action.ProjectBudgetAction"
+			method="beforeEdit">
+			<result name="success">/Pages/ProjectBudget/budgetEdit.jsp</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="editProjectBudget" class="com.scal.PIMS.action.ProjectBudgetAction"
+			method="editProjectBudget">
+			<param name="uploadPath">/Uploads</param>
+			<result name="success" type="redirectAction">multiEntityQuery?page=1&amp;flag=1</result>
+			<result name="error">/error.jsp</result>
+			<!-- 配置文件上传拦截器 -->
+			<!-- <interceptor-ref name="fileUpload"> -->
+			<!--配置上传文件类型 -->
+			<!-- <param name="allowedTypes">application/msword,application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document</param> -->
+			<!-- 配置上传文件大小 -->
+			<!-- <param name="maximumSize">52428800</param> -->
+			<!-- </interceptor-ref> <interceptor-ref name="defaultStack"></interceptor-ref> -->
+		</action>
+
+		<!-- <action name="deleteProjectBudget" class="com.scal.PIMS.action.ProjectBudgetAction" 
+			method="deleteProjectBudget"> <result name="success" type="redirectAction">multiEntityQuery</result> 
+			<result name="error">/error.jsp</result> </action> -->
+
+		<!-- 上传模块 -->
+		<!-- <action name="upload" class="com.scal.PIMS.action.UploadAction" method="upload"> -->
+		<action name="upload" class="com.scal.PIMS.action.UploadAction">
+			<param name="uploadPath">/Uploads</param>
+			<result name="success">/uploadSuccess.jsp</result>
+			<result name="input">/error.jsp</result>
+			<!-- 配置文件上传拦截器 -->
+			<interceptor-ref name="fileUpload">
+				<!--配置上传文件类型 -->
+				<param name="allowedTypes">application/msword,application/pdf,application/vnd.ms-excel,application/x-xls,
+					application/vnd.openxmlformats-officedocument.wordprocessingml.document</param>
+				<!-- 配置上传文件大小 -->
+				<param name="maximumSize">52428800</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<!-- 下载模块 -->
+		<action name="fileDownload" class="com.scal.PIMS.action.FileDownloadAction">
+			<!-- 指定被下载资源的位置 -->
+			<param name="inputPath">/Uploads</param>
+			<!-- 配置结果类型为stream的结果 -->
+			<result name="success" type="stream">
+				<!-- 指定下载文件的类型 -->
+				<param name="contentType">application/msword,application/pdf,application/vnd.ms-excel,application/x-xls,
+					application/vnd.openxmlformats-officedocument.wordprocessingml.document</param>
+				<!-- 指定由getTargetFile()方法返回被下载文件的InputSream -->
+				<param name="inputName">inputStream</param>
+				<!-- <param name="inputName">InputStream</param> -->
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<!-- 指定下载文件的缓冲大小 -->
+				<param name="bufferSize">4096</param>
+			</result>
+
+
+		</action>
+		<!-- 项目预算模块结束 -->
+		<!-- 项目进度记录查看开始 -->
+		<action name="projectProgressHistory" class="com.scal.PIMS.action.ProjectProgressHistoryAction"
+			method="showHistory">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectProgress/progressChanged.jsp</result>
+			<result name="input">/error.jsp</result>
+		</action>
+		<!-- 项目进度记录查看结束 -->
+
+		<!-- 曾雨桐的配置结束 -->
+
+
+		<!-- 王超的配置开始 -->
+
+		<!-- 项目子系统模块开始 -->
+
+		<action name="addProjectSystem" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="addProjectSystem">
+			<result name="success" type="redirectAction">findAllProjectSystem?projectId=${projectId}&amp;projectType=${projectType}&amp;projectPlatform=${projectPlatform}&amp;developType=${developType}&amp;projectName=${projectName}&amp;page=1&amp;flag=1&amp;message=${message}
+			</result>
+			<result name="input">/Pages/ProjectSubsystem/systemAdd.jsp</result>
+		</action>
+		<action name="editProjectSystem" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="editProjectSystem">
+			<result name="success" type="redirectAction">findAllProjectSystem?projectId=${projectId}&amp;projectType=${projectType}&amp;projectPlatform=${projectPlatform}&amp;developType=${developType}&amp;projectName=${projectName}&amp;page=1&amp;flag=1
+			</result>
+			<result name="input">/Pages/ProjectSubsystem/systemEdit.jsp</result>
+		</action>
+		<action name="findAllProjectSystem" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="findAllProjectSystem">
+			<interceptor-ref name="projectManagerStack" />
+			<result name="success">/Pages/ProjectSubsystem/projectSystem.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="beforeAddProjectSystem" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="beforeAdd">
+			<result name="success">/Pages/ProjectSubsystem/systemAdd.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="beforeEditProjectSystem" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="beforeEdit">
+			<result name="success">/Pages/ProjectSubsystem/systemEdit.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<!-- <action name="deleteProjectSystem" class="com.scal.PIMS.action.ProjectSystemAction" 
+			method="deleteProjectSystem"> <result name="success" type="redirectAction">findAllProjectSystem?projectId=${projectId}&amp;page=1&amp;flag=1 
+			</result> <result name="error">/error.jsp</result> </action> -->
+		<action name="deleteAnyProjectSystem" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="deleteAnyProjectSystem">
+			<result name="success" type="redirectAction">findAllProjectSystem?projectId=${projectId}&amp;projectType=${projectType}&amp;projectPlatform=${projectPlatform}&amp;developType=${developType}&amp;projectName=${projectName}&amp;page=1&amp;flag=1
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="projectSystemDetail" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="projectSystemDetail">
+			<result name="success">/Pages/ProjectSubsystem/systemDetail.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="findSystemBudget" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="findSystemBudget">
+			<result name="success">/Pages/ProjectSubsystem/systemBudgetList.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="beforeEditSystemBudget" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="beforeEdit">
+			<result name="success">/Pages/ProjectSubsystem/systemBudgetEdit.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="editSystemBudget" class="com.scal.PIMS.action.ProjectSystemAction"
+			method="editSystemBudget">
+			<result name="success" type="redirectAction">findSystemBudget?budgetId=${budgetId}&amp;projectName=${projectName}&amp;page=1&amp;flag=1
+			</result>
+			<result name="input">/Pages/ProjectSubsystem/systemBudgetEdit.jsp
+			</result>
+		</action>
+		<!-- 项目子系统模块结束 -->
+
+		<!-- 操作日志模块开始 -->
+		<action name="showLog" class="com.scal.PIMS.action.OperateLogAction"
+			method="showLog">
+			<interceptor-ref name="adminStack" />
+			<result name="success">/Pages/Log/operateLog.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="searchLog" class="com.scal.PIMS.action.OperateLogAction"
+			method="searchLog">
+			<result name="success">
+				/Pages/Log/operateLog.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="logDetail" class="com.scal.PIMS.action.OperateLogAction"
+			method="logDetail">
+			<result name="success">
+				/Pages/Log/logDetail.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+		</action>
+
+		<!-- 操作日志模块结束 -->
+		<!-- 王超的配置结束 -->
+
+
+	</package>
+
+</struts>

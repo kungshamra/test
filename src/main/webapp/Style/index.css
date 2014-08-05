@@ -1,0 +1,96 @@
+#container {
+	width: 100%;
+}
+
+body {
+	font-family: "微软雅黑";
+}
+
+#head {
+	height: 9%;
+}
+
+#logo {
+	width: 50%;
+	height: 70px;
+	position: absolute;
+	float: left;
+}
+
+#user {
+	width: 50%;
+	height: 70px;
+	width: 200px;
+	background-image: url(../Images/welcome.jpg);
+	background-repeat: no-repeat;
+	margin-left: 83%;
+	position: absolute;
+	float: right;
+}
+
+#user-info {
+	text-align: center;
+	margin-top: -5px;
+}
+
+.left {
+	width: 14%;
+	float: left;
+	margin-top: 60px;
+	position: absolute;
+}
+
+#sidebar {
+	width: 200px;
+	margin-top: 100px;
+	position: absolute;
+}
+
+.switch {
+	width: 5px;
+	cursor: pointer;
+	clear: both;
+	vertical-align: bottom;
+	margin-top: 400px;
+	margin-left: 202px;
+	border-right: 1px solid #B4C9C6;
+	position: absolute;
+	clear: both;
+	vertical-align: bottom;
+}
+
+.right {
+	width: 85%;
+	float: right;
+	margin-top: 70px;
+	margin-left: 208px;
+	position: absolute;
+}
+
+.add {
+	width: 98%;
+	margin-top: 70px;
+	margin-left: 12px;
+	position: absolute;
+}
+
+.hide {
+	display: none;
+}
+
+.reduce {
+	margin-left: 0px;
+}
+
+#tag {
+	width: 99%;
+}
+
+#content {
+	width: 99%;
+}
+
+#iframe {
+	width: 99%;
+	border: 0px;
+}
